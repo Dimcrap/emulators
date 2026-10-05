@@ -1,0 +1,73 @@
+#include <cstring>
+#include <stdlib.h>
+#include <fstream>
+#include <cstdint>
+#include <chrono>
+#include <random>
+
+
+constexpr  unsigned int START_ADDRESS = 0x200 ;
+constexpr unsigned int FONTSET_SIZE = 80 ;
+constexpr unsigned int FONTSET_START_ADDRESS = 0x50 ;
+
+
+class Chip8{
+
+	uint8_t fontest[FONTSET_SIZE]  {
+	0xF0,0x90,0x90,0x90,0xF0,
+	0x20, 0x60, 0x20, 0x20, 0x70, // 1
+	0xF0, 0x10, 0xF0, 0x80, 0xF0, // 2
+	0xF0, 0x10, 0xF0, 0x10, 0xF0, // 3
+	0x90, 0x90, 0xF0, 0x10, 0x10, // 4
+	0xF0, 0x80, 0xF0, 0x10, 0xF0, // 5
+	0xF0, 0x80, 0xF0, 0x90, 0xF0, // 6
+	0xF0, 0x10, 0x20, 0x40, 0x40, // 7
+	0xF0, 0x90, 0xF0, 0x90, 0xF0, // 8
+	0xF0, 0x90, 0xF0, 0x10, 0xF0, // 9
+	0xF0, 0x90, 0xF0, 0x90, 0x90, // A
+	0xE0, 0x90, 0xE0, 0x90, 0xE0, // B
+	0xF0, 0x80, 0x80, 0x80, 0xF0, // C
+	0xE0, 0x90, 0x90, 0x90, 0xE0, // D
+	0xF0, 0x80, 0xF0, 0x80, 0xF0, // E
+	0xF0, 0x80, 0xF0, 0x80, 0x80  // F
+	};
+
+	std::default_random_engine randGen;
+	std::uniform_int_distribution<uint8_t> randbyte;
+
+	public:
+		uint8_t registers[16]{};
+		uint8_t memory[ (0xFFF)+1 ];
+		uint16_t index{};
+		uint16_t pc{};
+		uint16_t stack[16]{};
+		uint8_t sp{};
+		uint8_t delayTimer{};
+		uint8_t soundTimer{};
+		uint8_t keypad[16]{};
+		uint32_t video[ 64 * 32 ]{};
+		uint16_t opcode;
+
+
+		Chip8();
+		void loadROM(char const * filename);	
+		inline unsigned int getrandnum(){
+			return randbyte(randGen);
+		};
+		inline void OP_00E0(){
+			memset(video,0,sizeof(video));
+		};
+		inline void OP_00EE(){
+			--sp;
+			pc = stack[sp] ;
+		}
+		inline void OP_1nnn(){
+			uint16_t address = opcode & 0x0FFFu ;
+			pc = address;
+		}
+		inline OP_2nnn(){
+			uint16_t address = opcode &
+		}
+
+
+};
