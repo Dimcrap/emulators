@@ -54,24 +54,21 @@ class Chip8{
 
 		Chip8();
 		void loadROM(char const * filename);	
-		inline unsigned int getrandnum(){
+		inline unsigned int getrandnum(void){
 			return randbyte(randGen);
 		};
-		inline void OP_00E0(){
+		inline void OP_00E0(void){
 			memset(video,0,sizeof(video));
 		};
-
-		inline void OP_00EE(){ 	//return subroutine
+		inline void OP_00EE(void){ 	//return subroutine
 			--sp;
 			pc = stack[sp] ;
 		};
-
-		inline void OP_1nnn(){	// jump
+		inline void OP_1nnn(void){	// jump
 			uint16_t address = opcode & 0x0FFFu ;
 			pc = address;
 		};
-
-		inline void OP_2nnn(){						//call subroutine
+		inline void OP_2nnn(void){						//call subroutine
 			uint16_t address = opcode & 0x0FFFu ;
 
 			stack[sp] = pc;
@@ -79,8 +76,7 @@ class Chip8{
 			pc = address ;
 
 		};
-
-		inline void OP_3xkk(){
+		inline void OP_3xkk(void){
 			uint8_t Vx = ( opcode & 0x0F00u ) >> 8u ;
 			uint8_t byte = opcode & 0x00FFu ;
 
@@ -89,8 +85,7 @@ class Chip8{
 			}
 
 		}
-
-		inline void OP_4xkk(){
+		inline void OP_4xkk(void){
 			uint8_t Vx = ( opcode & 0x0F00u ) >> 8u ;
 			uint8_t byte = opcode & 0x00FFu ;
 
@@ -99,73 +94,60 @@ class Chip8{
 				pc+= 2 ;
 			}
 		}
-
-		inline void OP_5xy0(){
+		inline void OP_5xy0(void){
 			uint8_t Vx = ( opcode & 0x0F00u ) >> 8u ;
 			uint8_t Vy = opcode & 0x00FFu ;
 
-			if (‌ registers[Vx] == registers[Vy]  )
+			if ( registers[Vx] == registers[Vy]  )
 				pc+=2 ;
+
 		}
-
-
-		inline void OP_6xkk(){
+		inline void OP_6xkk(void){
 			uint8_t Vx = ( opcode & 0x0F00u ) >> 8u ;
 			uint8_t byte = opcode & 0x00FFu ;
 
 			registers[Vx] = byte ;
 		}
-
-
-		inline void OP_7xkk(){
+		inline void OP_7xkk(void){
 			uint8_t Vx = ( opcode & 0x0F00u ) >> 8u ;
 			uint8_t byte = opcode & 0x00FFu ;
 
 			registers[Vx] += byte ;
 		}
-
-		inline void OP_8xy0(){
+		inline void OP_8xy0(void){
 			uint8_t Vx = ( opcode & 0x0F00u ) >> 8u ;
 			uint8_t Vy = ( opcode & 0x00F0u ) >> 4u ;
 
 			registers[Vx] = registers[Vy] ;
 		}
-
-		inline void OP_8xy1(){
+		inline void OP_8xy1(void){
 			uint8_t Vx = ( opcode & 0x0F00u ) >> 8u ;
 			uint8_t Vy = ( opcode & 0x00F0u ) >> 4u ;
 
 			registers[Vx] |= registers[Vy] ;
 		}
-
-		inline void OP_8xy2(){
+		inline void OP_8xy2(void){
 			uint8_t Vx = ( opcode & 0x0F00u ) >> 8u ;
 			uint8_t Vy = ( opcode & 0x00F0u ) >> 4u ;
 
 			registers[Vx] &= registers[Vy] ;
 		}
-
-
-		inline void OP_8xy3(){
+		inline void OP_8xy3(void){
 			uint8_t Vx = ( opcode & 0x0F00u ) >> 8u ;
 			uint8_t Vy = ( opcode & 0x00F0u ) >> 4u ;
 
 			registers[Vx] ^= registers[Vy] ;
 		}
-
-
-		inline void OP_8xy4(){
+		inline void OP_8xy4(void){
 			uint8_t Vx =  ( opcode & 0x0F00u ) >> 8u ;
 			uint8_t Vy = ( opcode & 0x00F0u ) >> 4u ;
 
 			uint16_t sum = registers[Vx] + registers[Vy] ;
-			(sum >‌ 255U) ? registers[0xF]=1 : registers[0xF]=0 ;
+			(sum > 255U) ? registers[0xF]=1 : registers[0xF]=0 ;
 
 			registers[Vx] = sum & 0xFFu ;
 		}
-
-
-		inline void OP_8xy5(){
+		inline void OP_8xy5(void){
 			uint8_t Vx =  ( opcode & 0x0F00u ) >> 8u ;
 			uint8_t Vy = ( opcode & 0x00F0u ) >> 4u ;
 
@@ -173,17 +155,13 @@ class Chip8{
 
 			registers[Vx] -= registers[Vy] ;
 		}
-
-
-		inline void OP_8xy6(){
+		inline void OP_8xy6(void){
 			uint8_t Vx = ( opcode & 0x0F00u ) >> 8u ;
 
 			registers[0xF] = ( registers[Vx] & 0x1u );
 			registers[Vx] >>= 1 ;
 		}
-
-
-		inline void OP_8xy7(){
+		inline void OP_8xy7(void){
 			uint8_t Vx =  ( opcode & 0x0F00u ) >> 8u ;
 			uint8_t Vy = ( opcode & 0x00F0u ) >> 4u ;
 
@@ -191,42 +169,35 @@ class Chip8{
 
 			registers[Vx] = registers[Vy] - registers[Vx] ;
 		}
-
-
-		inline void OP_8xyE(){
+		inline void OP_8xyE(void){
 			uint8_t Vx = ( opcode & 0x0f00u ) >> 8u ;
 
 			registers[0xF] = ( registers[Vx] & 0x80u ) >> 7u ;
 
 			registers[Vx] <<= 1 ;
 		}
-
-		inline void OP_9xy0(){
+		inline void OP_9xy0(void){
 			uint8_t Vx = ( opcode & 0x0F00u ) >> 8u ;
 			uint8_t Vy = ( opcode & 0x00F0u ) >> 4u ;
 
 			if ( registers[Vx] != registers[Vy] )
 				pc += 2 ;
 		}
-
-		inline void OP_Annn(){
+		inline void OP_Annn(void){
 			uint16_t address = opcode & 0x0FFFu;
 			index = address ;
 		}
-
-		inline void OP_Bnnn(){
+		inline void OP_Bnnn(void){
 			uint16_t address = opcode & 0x0FFFu;
 			pc = registers[0] + address ;
 		}
-
-		inline void OP_Cxkk(){
+		inline void OP_Cxkk(void){
 			uint8_t Vx = ( opcode & 0x0F00u ) >> 8u ;
 			uint8_t byte = opcode & 0x00FFu ;
 
 			registers[Vx] =  randbyte(randGen) & byte ;
 		}
-
-		inline void OP_Dyxn(){ //Draw
+		inline void OP_Dyxn(void){ //Draw
 			uint8_t Vx = ( opcode & 0x0F00u ) >> 8u ;
 			uint8_t Vy = ( opcode & 0x00F0u ) >> 4u ;
 			uint8_t height = opcode & 0x000Fu ;
@@ -255,9 +226,16 @@ class Chip8{
 					}
 			}
 		}
+		inline void OP_Ex9E(){
+			uint8_t Vx = ( opcode & 0x0F00u ) >> 8u ;
 
+			uint8_t key = registers[Vx];
 
-		inline void OP_ExA1()
+			if(keypad[key]){
+				pc+=2;
+			}
+		}
+		inline void OP_ExA1(void)
 		{
 			uint8_t Vx = ( opcode & 0x0F00u ) >> 8u ;
 
@@ -266,15 +244,11 @@ class Chip8{
 			if(!keypad[key])
 				pc+=2 ;
 		}
-
-
-		inline void OP_Fx01(){
+		inline void OP_Fx07(void){
 			uint8_t Vx = ( opcode & 0x0F00u ) >> 8u ;
 			registers[Vx] = delayTimer;
 		}
-
-
-		inline void OP_Fx0A()
+		inline void OP_Fx0A(void)
 		{
 			uint8_t Vx = ( opcode & 0x0F00u ) >> 8u ;
 
@@ -312,39 +286,29 @@ class Chip8{
 				pc -= 2 ;
 
 		}
-
-
-		inline void OP_Fx15()
+		inline void OP_Fx15(void)
 		{
 			uint8_t Vx = ( opcode & 0x0F00u ) >> 8u ;
 			delayTimer = registers[Vx] ;
 		}
-
-
-		inline void OP_Fx18()
+		inline void OP_Fx18(void)
 		{
 			uint8_t Vx = ( opcode & 0x0F00u ) >> 8u ;
 			soundTimer = registers[Vx] ;
 		}
-
-
-		inline void OP_Fx1E()
+		inline void OP_Fx1E(void)
 		{
 			uint8_t Vx = ( opcode & 0x0F00u ) >> 8u ;
 			index += registers[Vx] ;
 		}
-
-
-		inline void OP_Fx29() //LD F,Fx
+		inline void OP_Fx29(void) //LD F,Fx
 		{
 			uint8_t Vx = ( opcode & 0x0F00u ) >> 8u ;
 			uint8_t digit = registers[Vx] ;
 
 			index = FONTSET_START_ADDRESS + ( 5 * digit);
 		}
-
-
-		inline void OP_Fx33()
+		inline void OP_Fx33(void)
 		{
 			uint8_t Vx = ( opcode & 0x0F00u ) >> 8u ;
 			uint8_t value = registers[Vx] ;
@@ -358,9 +322,7 @@ class Chip8{
 			memory[index] = value  % 10 ;
 
 		}
-
-
-		inline void OP_Fx55()
+		inline void OP_Fx55(void)
 		{
 			uint8_t Vx = ( opcode & 0x0F00u ) >> 8u ;
 
@@ -370,8 +332,7 @@ class Chip8{
 			}
 
 		}
-
-		inline void OP_Fx65()
+		inline void OP_Fx65(void)
 		{
 			uint8_t Vx = ( opcode & 0x0F00u ) >> 8u ;
 
@@ -381,4 +342,19 @@ class Chip8{
 			}
 		}
 
+		void Table0(void);
+		void Table8(void);
+		void TableE(void);
+		void TableF(void);
+		void OP_NULL(void){};
+
+		typedef void ( Chip8::*Chip8Func)();
+
+		Chip8Func table[ 0xF + 1 ];
+		Chip8Func table0[ 0xE + 1 ];
+		Chip8Func table8[ 0xE + 1 ];
+		Chip8Func tableE[ 0xE + 1 ];
+		Chip8Func tableF[ 0x65 + 1 ];
+
+		void Cycle();
 };
