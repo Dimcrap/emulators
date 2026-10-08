@@ -209,11 +209,12 @@ class Chip8{
 
 			for ( unsigned int row {0} ; row < height ; ++ row)
 			{
-					uint8_t spriteByte = memory[index + row ] ;
+					uint8_t spriteByte = memory[ index + row ] ;
 
-					for ( unsigned int col = 0 ; row <height ; ++col ){
+					for ( unsigned int col = 0 ; col < 8 ; ++col )
+					{
 						uint8_t spritepixel = spriteByte & ( 0x80u >> col );
-						uint32_t * screenPixel = &video[ (yPos+ row ) * VIDEO_HEIGHT + (xPos + col ) ] ;
+						uint32_t * screenPixel = &video[ (yPos+ row ) * VIDEO_WIDTH + (xPos + col ) ] ;
 
 						if(spritepixel){
 
@@ -235,8 +236,7 @@ class Chip8{
 				pc+=2;
 			}
 		}
-		inline void OP_ExA1(void)
-		{
+		inline void OP_ExA1(void){
 			uint8_t Vx = ( opcode & 0x0F00u ) >> 8u ;
 
 			uint8_t key = registers[Vx];
@@ -248,8 +248,7 @@ class Chip8{
 			uint8_t Vx = ( opcode & 0x0F00u ) >> 8u ;
 			registers[Vx] = delayTimer;
 		}
-		inline void OP_Fx0A(void)
-		{
+		inline void OP_Fx0A(void){
 			uint8_t Vx = ( opcode & 0x0F00u ) >> 8u ;
 
 			if( keypad[0] )
@@ -286,18 +285,15 @@ class Chip8{
 				pc -= 2 ;
 
 		}
-		inline void OP_Fx15(void)
-		{
+		inline void OP_Fx15(void){
 			uint8_t Vx = ( opcode & 0x0F00u ) >> 8u ;
 			delayTimer = registers[Vx] ;
 		}
-		inline void OP_Fx18(void)
-		{
+		inline void OP_Fx18(void){
 			uint8_t Vx = ( opcode & 0x0F00u ) >> 8u ;
 			soundTimer = registers[Vx] ;
 		}
-		inline void OP_Fx1E(void)
-		{
+		inline void OP_Fx1E(void){
 			uint8_t Vx = ( opcode & 0x0F00u ) >> 8u ;
 			index += registers[Vx] ;
 		}
@@ -308,8 +304,7 @@ class Chip8{
 
 			index = FONTSET_START_ADDRESS + ( 5 * digit);
 		}
-		inline void OP_Fx33(void)
-		{
+		inline void OP_Fx33(void){
 			uint8_t Vx = ( opcode & 0x0F00u ) >> 8u ;
 			uint8_t value = registers[Vx] ;
 
@@ -322,8 +317,7 @@ class Chip8{
 			memory[index] = value  % 10 ;
 
 		}
-		inline void OP_Fx55(void)
-		{
+		inline void OP_Fx55(void){
 			uint8_t Vx = ( opcode & 0x0F00u ) >> 8u ;
 
 			for ( uint8_t i = 0 ; i <= Vx ; ++i )
@@ -332,8 +326,7 @@ class Chip8{
 			}
 
 		}
-		inline void OP_Fx65(void)
-		{
+		inline void OP_Fx65(void){
 			uint8_t Vx = ( opcode & 0x0F00u ) >> 8u ;
 
 			for( uint8_t i = 0 ; i <= Vx ; ++i)
@@ -357,4 +350,5 @@ class Chip8{
 		Chip8Func tableF[ 0x65 + 1 ];
 
 		void Cycle();
+
 };
